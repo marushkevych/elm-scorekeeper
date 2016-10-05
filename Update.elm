@@ -46,8 +46,21 @@ handleMessage msg model =
         Edit player ->
             editPlayer player model
 
+        Score player points ->
+            { model
+                | players = List.map (updateScore player.id points) model.players
+            }
+
         _ ->
             model
+
+
+updateScore : Int -> Int -> Player -> Player
+updateScore id points player =
+    if player.id == id then
+        { player | points = player.points + points }
+    else
+        player
 
 
 updateName : Int -> String -> Player -> Player

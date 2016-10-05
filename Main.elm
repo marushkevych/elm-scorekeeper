@@ -32,20 +32,33 @@ view model =
 playerSection : Model -> Html Msg
 playerSection model =
     div []
-        [ playerList model
+        [ playerListHeader
+        , playerList model
+          -- , pointTotal model
+        ]
+
+
+playerListHeader : Html Msg
+playerListHeader =
+    header []
+        [ div [] [ text "Name" ]
+        , div [] [ text "Points" ]
         ]
 
 
 playerList : Model -> Html Msg
 playerList model =
-    div [] (List.map playerRecord model.players)
+    ul [] (List.map playerRecord model.players)
 
 
 playerRecord : Player -> Html Msg
 playerRecord player =
-    div []
-        [ button [ onClick (Edit player) ] [ text "edit" ]
-        , text player.name
+    li []
+        [ i [ class "edit", onClick (Edit player) ] []
+        , div [] [ text player.name ]
+        , button [ onClick (Score player 2) ] [ text "2pt" ]
+        , button [ onClick (Score player 3) ] [ text "3pt" ]
+        , div [] [ text (toString player.points) ]
         ]
 
 
