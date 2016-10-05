@@ -6,7 +6,7 @@ type alias Model =
     , name : String
     , playerId : Maybe Int
     , plays : List Play
-    , nextId : Int
+    , error : String
     }
 
 
@@ -31,5 +31,5 @@ initModel =
     , name = ""
     , playerId = Nothing
     , plays = []
-    , nextId = 1
+    , error = ""
     }

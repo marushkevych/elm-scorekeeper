@@ -1,6 +1,7 @@
 module Update exposing (..)
 
 import Model exposing (..)
+import String
 
 
 type Msg
@@ -14,18 +15,27 @@ type Msg
 
 update : Msg -> Model -> Model
 update msg model =
+    handleMessage msg (clearError model)
+
+
+handleMessage : Msg -> Model -> Model
+handleMessage msg model =
     case msg of
         Input name ->
             -- Debug.log "Input Updated Model"
             { model | name = name }
 
         Save ->
-            case model.playerId of
-                Nothing ->
-                    addNewPlayer model
+            if String.isEmpty model.name then
+                { model | error = "Please provide a name" }
+            else
+                case model.playerId of
+                    Nothing ->
+                        model
+                            |> addNewPlayer
 
-                Just id ->
-                    updatePlayer id model
+                    Just id ->
+                        updatePlayer id model
 
         Cancel ->
             { model
@@ -52,12 +62,15 @@ updateName id name player =
 
 addNewPlayer : Model -> Model
 addNewPlayer model =
-    { model
-        | players = Player model.nextId model.name 0 :: model.players
-        , nextId = model.nextId + 1
-        , name = ""
-        , playerId = Nothing
-    }
+    let
+        id =
+            List.length model.players
+    in
+        { model
+            | players = Player id model.name 0 :: model.players
+            , name = ""
+            , playerId = Nothing
+        }
 
 
 updatePlayer : Int -> Model -> Model
@@ -67,6 +80,11 @@ updatePlayer id model =
         , playerId = Nothing
         , players = List.map (updateName id model.name) model.players
     }
+
+
+clearError : Model -> Model
+clearError model =
+    { model | error = "" }
 
 
 editPlayer : Player -> Model -> Model

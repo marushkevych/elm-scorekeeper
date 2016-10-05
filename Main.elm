@@ -24,6 +24,7 @@ view model =
         [ h1 [] [ text "Score Keeper" ]
         , playerSection model
         , playerForm model
+        , div [ class "error" ] [ text model.error ]
         , p [] [ text (toString model) ]
         ]
 
