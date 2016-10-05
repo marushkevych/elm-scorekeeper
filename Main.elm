@@ -34,8 +34,21 @@ playerSection model =
     div []
         [ playerListHeader
         , playerList model
-          -- , pointTotal model
+        , pointTotal model
         ]
+
+
+pointTotal : Model -> Html Msg
+pointTotal model =
+    let
+        total =
+            List.map .points model.players
+                |> List.sum
+    in
+        footer []
+            [ div [] [ text "Total: " ]
+            , div [] [ text (toString total) ]
+            ]
 
 
 playerListHeader : Html Msg
