@@ -62,11 +62,15 @@ playerListHeader =
 
 playerList : Model -> Html Msg
 playerList model =
-    ul [] (List.map playerRecord model.players)
+    -- ul [] (List.map player model.players)
+    model.players
+        |> List.sortBy .name
+        |> List.map player
+        |> ul []
 
 
-playerRecord : Player -> Html Msg
-playerRecord player =
+player : Player -> Html Msg
+player player =
     li []
         [ i [ class "edit", onClick (Edit player) ] []
         , div [] [ text player.name ]
@@ -101,11 +105,11 @@ playsHeader =
 
 playsList : Model -> Html Msg
 playsList model =
-    ul [] (List.map playRecord model.plays)
+    ul [] (List.map play model.plays)
 
 
-playRecord : Play -> Html Msg
-playRecord play =
+play : Play -> Html Msg
+play play =
     li []
         [ i [ class "remove", onClick (DeletePlay play) ] []
         , div [] [ text play.name ]
