@@ -65,34 +65,56 @@ playerList model =
     -- ul [] (List.map player model.players)
     model.players
         |> List.sortBy .name
-        |> List.map player
+        |> List.map (player model)
         |> ul []
 
 
-player : Player -> Html Msg
-player player =
-    li []
-        [ i [ class "edit", onClick (Edit player) ] []
-        , div [] [ text player.name ]
-        , button [ onClick (Score player 2) ] [ text "2pt" ]
-        , button [ onClick (Score player 3) ] [ text "3pt" ]
-        , div [] [ text (toString player.points) ]
-        ]
+player : Model -> Player -> Html Msg
+player model player =
+    let
+        nameClass =
+            case model.playerId of
+                Just id ->
+                    if id == player.id then
+                        "edit"
+                    else
+                        ""
+
+                Nothing ->
+                    ""
+    in
+        li []
+            [ i [ class "edit", onClick (Edit player) ] []
+            , div [ class nameClass ] [ text player.name ]
+            , button [ onClick (Score player 2) ] [ text "2pt" ]
+            , button [ onClick (Score player 3) ] [ text "3pt" ]
+            , div [] [ text (toString player.points) ]
+            ]
 
 
 playerForm : Model -> Html Msg
 playerForm model =
-    Html.form [ onSubmit Save ]
-        [ input
-            [ type' "text"
-            , placeholder "Add/Edit Player..."
-            , onInput Input
-            , value model.name
+    let
+        inputClass =
+            case model.playerId of
+                Just id ->
+                    "edit"
+
+                Nothing ->
+                    ""
+    in
+        Html.form [ onSubmit Save ]
+            [ input
+                [ type' "text"
+                , placeholder "Add/Edit Player..."
+                , onInput Input
+                , value model.name
+                , class inputClass
+                ]
+                []
+            , button [ type' "submit" ] [ text "Save" ]
+            , button [ type' "button", onClick Cancel ] [ text "Cancel" ]
             ]
-            []
-        , button [ type' "submit" ] [ text "Save" ]
-        , button [ type' "button", onClick Cancel ] [ text "Cancel" ]
-        ]
 
 
 playsHeader : Html Msg
@@ -105,7 +127,10 @@ playsHeader =
 
 playsList : Model -> Html Msg
 playsList model =
-    ul [] (List.map play model.plays)
+    -- ul [] (List.map play model.plays)
+    model.plays
+        |> List.map play
+        |> ul []
 
 
 play : Play -> Html Msg
