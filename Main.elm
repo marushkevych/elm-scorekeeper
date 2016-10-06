@@ -25,7 +25,8 @@ view model =
         , playerSection model
         , playerForm model
         , div [ class "error" ] [ text model.error ]
-        , p [] [ text (toString model) ]
+        , playsSection model
+          -- , p [] [ text (toString model) ]
         ]
 
 
@@ -87,4 +88,34 @@ playerForm model =
             []
         , button [ type' "submit" ] [ text "Save" ]
         , button [ type' "button", onClick Cancel ] [ text "Cancel" ]
+        ]
+
+
+playsHeader : Html Msg
+playsHeader =
+    header []
+        [ div [] [ text "Plays" ]
+        , div [] [ text "Points" ]
+        ]
+
+
+playsList : Model -> Html Msg
+playsList model =
+    ul [] (List.map playRecord model.plays)
+
+
+playRecord : Play -> Html Msg
+playRecord play =
+    li []
+        [ i [ class "remove", onClick (DeletePlay play) ] []
+        , div [] [ text play.name ]
+        , div [] [ text (toString play.points) ]
+        ]
+
+
+playsSection : Model -> Html Msg
+playsSection model =
+    div []
+        [ playsHeader
+        , playsList model
         ]

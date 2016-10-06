@@ -47,12 +47,23 @@ handleMessage msg model =
             editPlayer player model
 
         Score player points ->
+            score player points model
+
+        DeletePlay play ->
             { model
-                | players = List.map (updateScore player.id points) model.players
+                | plays = List.filter (.id >> (/=) play.id) model.plays
+                , players = List.map (removePoints play) model.players
             }
 
-        _ ->
-            model
+
+removePoints : Play -> Player -> Player
+removePoints play player =
+    if player.id == play.playerId then
+        { player
+            | points = player.points - play.points
+        }
+    else
+        player
 
 
 updateScore : Int -> Int -> Player -> Player
@@ -73,6 +84,16 @@ updateName id name player =
         player
 
 
+updatePlay : Int -> String -> Play -> Play
+updatePlay id name play =
+    if play.playerId == id then
+        { play
+            | name = name
+        }
+    else
+        play
+
+
 addNewPlayer : Model -> Model
 addNewPlayer model =
     let
@@ -86,12 +107,31 @@ addNewPlayer model =
         }
 
 
+score : Player -> Int -> Model -> Model
+score player points model =
+    let
+        newPlayers =
+            List.map (updateScore player.id points) model.players
+
+        playId =
+            List.length model.plays
+
+        play =
+            Play playId player.id player.name points
+    in
+        { model
+            | players = newPlayers
+            , plays = play :: model.plays
+        }
+
+
 updatePlayer : Int -> Model -> Model
 updatePlayer id model =
     { model
         | name = ""
         , playerId = Nothing
         , players = List.map (updateName id model.name) model.players
+        , plays = List.map (updatePlay id model.name) model.plays
     }
 
 
